@@ -62,11 +62,54 @@ v3版本中ClientHandler在处理客户端的请求环节会根据客户端请�
 	响应头和正文参照正常响应资源.
 
 
+本版本主要工作:代码重构
+与请求相同,我们可以再设计一个类HttpResponse并使用这类的每个实例表示服务端给客户发送的一个响应.
+将响应内容发送给客户端的工作也定义在HttpResponse
+使代码重用.
 
 
+实现:
+1:在com.webserver.http包中定义类HttpRsponse
+
+2:在HttpResponse中定义一个响应所对应的三部分的属性
+
+3:为属性提供get,set方法
+
+4:定义一个flush
+这个方法用来将当前响应对象的内容以一个标准的HTTP响应格式发送给客户端(原ClientHandler的工作)
+
+5:ClientHandler在发送响应时改为调用HttpResponse的flush方法.
+
+本版本主要工作:解决空请求问题
+HTTP协议允许客户端发送空请求,并且浏览器发送空请求后就会与服务端断开连接.但是以我们现在的实现来看,若发送的是空请求,解析请求中的请求行为时会出现下标越界的情况(因为我们会将请求行拆分成3项解析),并且向客户端发送响应,由于客户端断开,会出现"断开的管道"
+这样的异常.
+对此,在解析空请求时停止本次处理后续的一切操作.
+
+实现思路:在HttpRequest解析发现空请求,抛出异常给ClientHandler,ClientHandler捕获后跳过后续步骤.
+
+实现:
+
+1:在com.webserver.core包中创建自定义异常EmptyRequestException:空请求异常
+
+2:在HttpRequest的解析请求方法:中判定,为空则抛出异常
+
+3:HttpRequest捕获向上抛出ClientHandler
+
+4:ClientHandler捕获后跳过请求直接与客户端断开.
 
 
+本版本主要工作:重构HttpResponse发送响应头的工作
 
+之前版本中HttpResponse发送响应头的方法是固定的,需根据请求改变资源类型
+
+1:发送响应的头根据实际设置.
+
+2:设置Content-Type以便浏览器正确解析
+
+4:在com.webserver.http包中定义一个类:HttpContext这个类中含有所有HTTP协议内容的定义,
+	先定义一个Map mimeMapping用于存放Content-Type中的值.
+	
+5:ClientHandler中可根据资源后缀获取Content-Type.
 
 
 
