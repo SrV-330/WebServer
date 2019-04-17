@@ -31,12 +31,12 @@ public class WebServer {
 	public void start(){
 		
 		try {
-			//while(true){
+			while(true){
 				System.err.println("wait client connecting...");
 				Socket socket=server.accept();
 				executor.execute(new ClientHandler(socket));
 				System.err.println("a client connected");
-			//}
+			}
 			
 			
 			

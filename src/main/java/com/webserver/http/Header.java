@@ -1,7 +1,9 @@
 package com.webserver.http;
 
 
-import com.webserver.exception.IllegalRequestException;
+import java.io.UnsupportedEncodingException;
+
+import com.webserver.exception.EmptyRequestException;
 
 public class Header {
 	
@@ -31,17 +33,17 @@ public class Header {
 
 	public void parser(String header,String value) throws Exception{
 		
-		if(header==null||value==null) throw new IllegalRequestException("header or value must be not null");
-		if(header.length()==0||value.length()==0) throw new IllegalRequestException("header or value must be not empty");
+		if(header==null||value==null) throw new EmptyRequestException("header or value must be not null");
+		if(header.length()==0||value.length()==0) throw new EmptyRequestException("header or value must be not empty");
 		this.header=header;
 		this.value=value;
 		
 	}
 	public void parser(String line) throws Exception{
 		
-		if(line==null) throw new IllegalRequestException("header or value must be not null");
+		if(line==null) throw new EmptyRequestException("header or value must be not null");
 		String lines[] =line.split(":\\s{1,}");
-		if(lines.length!=2) throw new IllegalRequestException("header or value must be not null");
+		if(lines.length!=2) throw new EmptyRequestException("header or value must be not null");
 		lines[0]=lines[0].trim();
 		lines[1]=lines[1].trim();
 		parser(lines[0],lines[1]);
@@ -80,7 +82,10 @@ public class Header {
 
 	@Override
 	public String toString() {
-		return "( " + header + ", " + value + " ) ";
+		return "" + header + ": " + value + "\r\n";
+	}
+	public byte[] toBytes() throws UnsupportedEncodingException{
+		return this.toString().getBytes("ISO8859-1");
 	}
 	
 	

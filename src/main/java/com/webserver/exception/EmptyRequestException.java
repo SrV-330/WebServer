@@ -1,18 +1,18 @@
 package com.webserver.exception;
 
-public class IllegalRequestException extends RuntimeException {
+public class EmptyRequestException extends RuntimeException {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public IllegalRequestException() {
+	public EmptyRequestException() {
 		super();
 		
 	}
 	
-	public IllegalRequestException(String message) {
+	public EmptyRequestException(String message) {
 		super(message);
 		
 	}
