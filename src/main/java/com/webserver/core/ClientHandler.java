@@ -10,6 +10,7 @@ import com.webserver.exception.EmptyRequestException;
 import com.webserver.http.HttpContext;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
+import com.webserver.servlet.RegServlet;
 
 public class ClientHandler  implements Runnable{
 	
@@ -31,32 +32,32 @@ public class ClientHandler  implements Runnable{
 			
 			HttpRequest request=new HttpRequest(socket);
 			
-			HttpResponse response=null;
+			HttpResponse response=new HttpResponse.Builder(socket).builder();
 			
-			String path=request.getUrl();
-			File file=new File("webapps"+path);
+			String path=request.getRequestURI();
 			
-			if(file.exists()&&file.isFile()){
-				System.out.println("ClientHandler:resource found");
-				
-				
-				response=new HttpResponse.Builder(socket)
-						.setEntity(file)
-						
-						.builder();
-				
-				
-				
-				
+			if("/myweb/reg".equals(path)){
+				RegServlet servlet=new RegServlet();
+				servlet.service(request,response);
 			}else{
-				System.out.println("ClientHandler:resource not found");
-				file=new File("webapps/root/404.html");
-				response=new HttpResponse.Builder(socket)
-						.setStatucode(404)
-						.setStatusReason("NOT FOUND")
-						.setEntity(file)
-						.builder();
+				File file=new File("webapps"+path);
 				
+				if(file.exists()&&file.isFile()){
+					System.out.println("ClientHandler:resource found");
+					
+					
+					response.setEntity(file);
+					
+					
+					
+				}else{
+					System.out.println("ClientHandler:resource not found");
+					file=new File("webapps/root/404.html");
+					response.setStatusCode(404);
+					response.setStatusReason("NOT FOUND");
+					response.setEntity(file);
+					
+				}
 			}
 			response.flush();
 			

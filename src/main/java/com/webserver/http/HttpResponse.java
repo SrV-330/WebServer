@@ -32,7 +32,7 @@ public class HttpResponse {
 
 
 
-	public void setStatucCode(int statucCode) {
+	public void setStatusCode(int statucCode) {
 		this.statucCode = statucCode;
 	}
 
@@ -161,7 +161,7 @@ public class HttpResponse {
 			return this;
 		}
 		public Builder setStatucode(int code) throws Exception{
-			httpResponse.setStatucCode(code);
+			httpResponse.setStatusCode(code);
 			
 			return this;
 		} 

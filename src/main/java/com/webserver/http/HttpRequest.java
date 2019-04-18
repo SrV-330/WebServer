@@ -19,6 +19,12 @@ public class HttpRequest {
 	
 	private Socket socket;
 	
+	private String requestURI;
+	
+	private String queryString;
+	
+	private HashMap<String,String> parameters= new HashMap<>();
+	
 	private InputStream in;
 	
 	public HttpRequest(){
@@ -32,22 +38,30 @@ public class HttpRequest {
 	public void setSocket(Socket socket) {
 		this.socket = socket;
 	}
+	
+	
 
-	
-	
 	public String getMethod() {
 		return method;
 	}
+
+
 
 	public String getUrl() {
 		return url;
 	}
 
+
+
 	public String getProtocol() {
 		return protocol;
 	}
 
-	public HttpRequest(Socket socket) {
+	public Header getHeader(String name){
+		return headers.get(name);
+	}
+
+	public HttpRequest(Socket socket) throws Exception {
 		
 		System.err.println("HttpRequest:start parsing request...");
 		
@@ -58,7 +72,11 @@ public class HttpRequest {
 				parseHanders();
 				parseContent();
 				
-			} catch (Exception e) {
+			} 
+			catch(EmptyRequestException e){
+				throw e;
+			}
+			catch (Exception e) {
 				
 				e.printStackTrace();
 			}
@@ -90,13 +108,38 @@ public class HttpRequest {
 		
 		
 		
+		
+		
+		
+		
 		System.out.println("Method: "+method);
 		System.out.println("URL: "+url);
 		System.out.println("Protocol: "+protocol);
+		parserURL();
 
 		System.err.println("parse request line complete");
 	}
-	
+	private void parserURL(){
+		String[] data=url.split("\\?");
+		requestURI=data[0];
+		if(data.length>1){
+			queryString=data[1];
+			String[] kvs=queryString.split("&");
+			for(String kv:kvs){
+					
+				String[] p=kv.split("=");
+				if(p.length>1){
+					parameters.put(p[0], p[1]);
+				}else{
+					parameters.put(p[0], null);
+				}
+				
+			}
+		}else{
+			requestURI=url;
+		}
+		System.out.println(parameters);
+	}
 	private void parseHanders() throws Exception{
 		System.err.println("start parsing request handers...");
 		
@@ -135,5 +178,38 @@ public class HttpRequest {
 		String line=sb.toString().trim();
 		return line;
 	}
+
+	public String getParameter(String name){
+		return this.parameters.get(name);
+	}
+	
+	public String getRequestURI() {
+		return requestURI;
+	}
+
+	public void setRequestURI(String requestURI) {
+		this.requestURI = requestURI;
+	}
+
+	public String getQueryString() {
+		return queryString;
+	}
+
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setProtocol(String protocol) {
+		this.protocol = protocol;
+	}
+	
 
 }
