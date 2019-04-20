@@ -62,7 +62,7 @@ v3版本中ClientHandler在处理客户端的请求环节会根据客户端请�
 	响应头和正文参照正常响应资源.
 
 
-本版本主要工作:代码重构
+*本版本主要工作:代码重构
 与请求相同,我们可以再设计一个类HttpResponse并使用这类的每个实例表示服务端给客户发送的一个响应.
 将响应内容发送给客户端的工作也定义在HttpResponse
 使代码重用.
@@ -80,7 +80,7 @@ v3版本中ClientHandler在处理客户端的请求环节会根据客户端请�
 
 5:ClientHandler在发送响应时改为调用HttpResponse的flush方法.
 
-本版本主要工作:解决空请求问题
+*本版本主要工作:解决空请求问题
 HTTP协议允许客户端发送空请求,并且浏览器发送空请求后就会与服务端断开连接.但是以我们现在的实现来看,若发送的是空请求,解析请求中的请求行为时会出现下标越界的情况(因为我们会将请求行拆分成3项解析),并且向客户端发送响应,由于客户端断开,会出现"断开的管道"
 这样的异常.
 对此,在解析空请求时停止本次处理后续的一切操作.
@@ -98,7 +98,7 @@ HTTP协议允许客户端发送空请求,并且浏览器发送空请求后就会
 4:ClientHandler捕获后跳过请求直接与客户端断开.
 
 
-本版本主要工作:重构HttpResponse发送响应头的工作
+*本版本主要工作:重构HttpResponse发送响应头的工作
 
 之前版本中HttpResponse发送响应头的方法是固定的,需根据请求改变资源类型
 
@@ -106,10 +106,45 @@ HTTP协议允许客户端发送空请求,并且浏览器发送空请求后就会
 
 2:设置Content-Type以便浏览器正确解析
 
-4:在com.webserver.http包中定义一个类:HttpContext这个类中含有所有HTTP协议内容的定义,
+3:在com.webserver.http包中定义一个类:HttpContext这个类中含有所有HTTP协议内容的定义,
 	先定义一个Map mimeMapping用于存放Content-Type中的值.
 	
-5:ClientHandler中可根据资源后缀获取Content-Type.
+4:ClientHandler中可根据资源后缀获取Content-Type.
+
+*本版本主要工作:接受用户输入数据
+注册,登录
+
+1:在webapps/myweb目录下新建注册页面:reg.html
+2:重构HttpRequest 解析用户输入参数
+
+在HttpRequest中定义3个属性:String requestURI,String queryString,Map paramters保存参数.
+
+*本版本主要工作:实现注册
+
+当请求是业务,处理业务;
+当请求为静态资源,发送资源.
 
 
+*本版本主要工作:实现登录
+
+实现:
+1:创建页面login.html,用form提交用户数据,路径为"./login"
+	成功页面 login_success.html
+	失败页面 login_fail.html 一律提示:用户名或密码不正确/
+
+2:在ClientHandler判断请求.
+
+3:创建LoginServlet,在service中处理登录
+
+*本版本主要工作:重构代码
+
+根据不同的业务定义相应的Servlet来处理,定义一个超类,在超类中定义所有Servlet都会使用的方法.
+
+实现:
+
+1:在com.webserver.servlet中定义HttpServlet
+	该类是抽象类.
+2:在超类中定义方法抽象service.
+
+3:所有Servlet继承HttpServlet.
 
