@@ -10,7 +10,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 public class HttpContext {
-	
+	public static final int CR=13;
+	public static final int LF=10;
+	public static final String CRLF="\r\n";
 	private final static Map<String,String> mimeMapping=new HashMap<String, String>();
 	static{
 		initMimeMapping();
@@ -29,7 +31,7 @@ public class HttpContext {
 				String value=mapEle.elementText("mime-type").trim();
 				mimeMapping.put(key, value);
 			}
-			System.out.println(mimeMapping.size());
+			System.out.println("mimeMapping size: "+mimeMapping.size());
 			
 			
 			

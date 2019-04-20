@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class HttpResponse {
 	
@@ -77,7 +76,7 @@ public class HttpResponse {
 			this.socket = socket;
 			this.out=this.socket.getOutputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 		
@@ -101,7 +100,7 @@ public class HttpResponse {
 			
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
@@ -113,10 +112,16 @@ public class HttpResponse {
 		System.err.println("HttpResponse: send status line...");
 		String line ="HTTP/1.1 "+statucCode+" "+statusReason;
 		
-		out.write(line.getBytes("ISO8859-1"));
-		out.write('\r');
-		out.write('\n');
+		println(line);
+		
 		System.err.println("HttpResponse: send status line complete");
+	}
+	
+	
+	private void println(String line) throws Exception{
+		out.write(line.getBytes("ISO8859-1"));
+		out.write(HttpContext.CR);
+		out.write(HttpContext.LF);
 	}
 	private void sendHeaders() throws Exception{
 		System.err.println("HttpResponse: send headers...");
@@ -127,8 +132,7 @@ public class HttpResponse {
 		}
 		
 		
-		out.write('\r');
-		out.write('\n');
+		println("");
 		System.err.println("HttpResponse: send headers complete");
 	}
 	private void sendContent() throws Exception{

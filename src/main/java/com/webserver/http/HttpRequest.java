@@ -170,7 +170,7 @@ public class HttpRequest {
 		int c1=-1;
 		StringBuilder sb=new StringBuilder("");
 		while((c1=in.read())!=-1){
-			if(c=='\r'&&c1=='\n') break;
+			if(c==HttpContext.CR&&c1==HttpContext.LF) break;
 			sb.append((char)c1);
 			c=c1;
 		}

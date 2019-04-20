@@ -3,13 +3,12 @@ package com.webserver.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.webserver.exception.EmptyRequestException;
-import com.webserver.http.HttpContext;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
+import com.webserver.servlet.HttpServlet;
+import com.webserver.servlet.LoginServlet;
 import com.webserver.servlet.RegServlet;
 
 public class ClientHandler  implements Runnable{
@@ -37,7 +36,10 @@ public class ClientHandler  implements Runnable{
 			String path=request.getRequestURI();
 			
 			if("/myweb/reg".equals(path)){
-				RegServlet servlet=new RegServlet();
+				HttpServlet servlet=new RegServlet();
+				servlet.service(request,response);
+			}else if("/myweb/login".equals(path)){
+				HttpServlet servlet=new LoginServlet();
 				servlet.service(request,response);
 			}else{
 				File file=new File("webapps"+path);
