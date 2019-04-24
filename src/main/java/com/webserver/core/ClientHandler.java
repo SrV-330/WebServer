@@ -8,8 +8,6 @@ import com.webserver.exception.EmptyRequestException;
 import com.webserver.http.HttpRequest;
 import com.webserver.http.HttpResponse;
 import com.webserver.servlet.HttpServlet;
-import com.webserver.servlet.LoginServlet;
-import com.webserver.servlet.RegServlet;
 
 public class ClientHandler  implements Runnable{
 	
@@ -34,12 +32,9 @@ public class ClientHandler  implements Runnable{
 			HttpResponse response=new HttpResponse.Builder(socket).builder();
 			
 			String path=request.getRequestURI();
-			
-			if("/myweb/reg".equals(path)){
-				HttpServlet servlet=new RegServlet();
-				servlet.service(request,response);
-			}else if("/myweb/login".equals(path)){
-				HttpServlet servlet=new LoginServlet();
+			HttpServlet servlet=ServerContext.getServlet(path);
+			if(servlet!=null){
+				
 				servlet.service(request,response);
 			}else{
 				File file=new File("webapps"+path);

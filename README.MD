@@ -148,3 +148,68 @@ HTTP协议允许客户端发送空请求,并且浏览器发送空请求后就会
 
 3:所有Servlet继承HttpServlet.
 
+*本版本主要工作:支持post请求提交form表单提交数据
+
+当form中含有用户隐私或有上传附件操作,使用post.
+
+传递用户数据时,form中包含两个头:
+Content-Length:消息正文长度;
+Content-Type:application/x-www-form-urlencoded.
+
+实现:
+
+1:设置页面提交method="post"
+
+2:解析.
+
+	2.1 判断请求是否为post;
+	2.2解析请求行Content-Length获取数据字节长度,保存在HttpRequest中的byte[]中;
+	2.3根据Content-Type获取数据类型是否为application/x-www-form-urlencoded;
+	2.4将正文数据转换为字符串;
+	2.5解析数据,存入parameters中.
+	
+	
+	
+*本版本主要工作:完成密码修改功能
+
+流程:
+1:用户访问update.html
+2:在页面输入用户名,旧密码,新密码点击修改,提交路径./update
+3:处理Servlet名为UpdateServlet,成功:update_success.html
+	失败提示原因:update_fail.html.
+
+	
+*本版本主要工作:利用反射机制完成请求Servlt
+
+之前版本存在问题:每添加一个业务,要重新定义路径和Servlet,
+
+因此,我们应当利用反射在xml文件中找到相对应的Servlet并实例化.
+
+
+
+实现:
+1:在com.webserver.core中新建一个类ServerContext
+
+2:在ServerContext中定义map servletMapping解析conf/servlets.xml利用反射加载实例化Servlet.
+
+3:定义getServlet(String path)方法根据请求url获取对应的Servlet.
+
+4:修改ClientHandler处理请求,根据请求路径调用对应Servlet处理请求.
+
+
+
+*本版本主要工作:使用thymeleaf完成动态页面
+
+
+
+
+
+*本版本主要工作:结束
+
+1:使用线程池处理客户端请求,执行任务类ClientHandler
+
+
+实现:
+	在WebServer类中添加一个是线程池
+	创建ClientHandler交给线程池处理
+	

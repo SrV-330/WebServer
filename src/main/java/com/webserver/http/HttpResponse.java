@@ -19,6 +19,8 @@ public class HttpResponse {
 	
 	private File entity;
 	
+	private byte[] data;
+	
 	private Socket socket;
 	
 	private OutputStream out;
@@ -57,6 +59,7 @@ public class HttpResponse {
 
 	public void setEntity(File entity) throws Exception {
 		this.entity = entity;
+		this.data=null;
 		
 		String s=entity.getName().toLowerCase();
 		s=s.substring(s.lastIndexOf(".")+1);
@@ -65,7 +68,7 @@ public class HttpResponse {
 		addHeader("Content-Length: "+entity.length()+"");
 	}
 
-
+	
 	
 	
 
@@ -150,10 +153,19 @@ public class HttpResponse {
 				
 				throw e;
 			}
+		}else if(data!=null){
+			out.write(data);
 		}
 		System.err.println("HttpResponse: send content complete");
 	}
-	
+
+	public void setContentData(byte[] data,String ext) throws Exception {
+		this.data = data;
+		this.entity=null;
+		addHeader("Content-Type: "+HttpContext.getExt(ext));
+		addHeader("Content-Length: "+data.length+"");
+	}
+
 	public static class Builder{
 		private HttpResponse httpResponse;
 		public Builder(Socket socket){
@@ -171,6 +183,11 @@ public class HttpResponse {
 		} 
 		public Builder setEntity(File file) throws Exception{
 			httpResponse.setEntity(file);
+			
+			return this;
+		} 
+		public Builder setContentData(byte[] data,String ContentType) throws Exception{
+			httpResponse.setContentData(data,ContentType);
 			
 			return this;
 		} 

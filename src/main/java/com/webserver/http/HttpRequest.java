@@ -27,6 +27,8 @@ public class HttpRequest {
 	
 	private InputStream in;
 	
+	private byte[] data;
+	
 	public HttpRequest(){
 		
 	}
@@ -69,6 +71,7 @@ public class HttpRequest {
 				this.socket=socket;
 				this.in=socket.getInputStream();
 				parseRequestLine();
+				parserURL();
 				parseHanders();
 				parseContent();
 				
@@ -115,7 +118,7 @@ public class HttpRequest {
 		System.out.println("Method: "+method);
 		System.out.println("URL: "+url);
 		System.out.println("Protocol: "+protocol);
-		parserURL();
+		
 
 		System.err.println("parse request line complete");
 	}
@@ -124,17 +127,7 @@ public class HttpRequest {
 		requestURI=data[0];
 		if(data.length>1){
 			queryString=data[1];
-			String[] kvs=queryString.split("&");
-			for(String kv:kvs){
-					
-				String[] p=kv.split("=");
-				if(p.length>1){
-					parameters.put(p[0], p[1]);
-				}else{
-					parameters.put(p[0], null);
-				}
-				
-			}
+			parserParameters(queryString);
 		}else{
 			requestURI=url;
 		}
@@ -156,9 +149,45 @@ public class HttpRequest {
 		
 		System.err.println("parse request handers complete");
 	}
+	private void parserParameters(String line){
+		String[] kvs=line.split("&");
+		for(String kv:kvs){
+				
+			String[] p=kv.split("=");
+			if(p.length>1){
+				parameters.put(p[0], p[1]);
+			}else{
+				parameters.put(p[0], null);
+			}
+			
+		}
+	}
 	private void parseContent(){
 		System.err.println("start parsing request content...");
 		
+		
+		if(method.toLowerCase().equals("post")){
+			method=method.toUpperCase();
+			System.out.println("handler post");
+			Header type=headers.get("Content-Type");
+			if(type.getValue().equals("application/x-www-form-urlencoded")){
+				Header length=headers.get("Content-Length");
+				try{
+					byte[] b=new byte[Integer.parseInt(length.getValue())];
+					in.read(b);
+					data=b;
+					String s=new String(data,"ISO8859-1");
+					System.out.println("form: "+s);
+					parserParameters(s);
+					
+				} catch (Exception e) {
+					
+					e.printStackTrace();
+				}
+			}
+			
+			
+		}
 		
 		
 		

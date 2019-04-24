@@ -6,27 +6,40 @@
 	<body>
 		<center>
 			<h1>Welcome</h1>
-			<form action="login" method="get">
+			<form action="login" method="post">
 				<table border="1">
 					<tr>
 						<td>用户名:</td>
-						<td><input name="userName" type="text"/></td>
+						<td colspan="2"><input name="userName" type="text"/></td>
 						
 						
 					</tr>
 					<tr>
 						<td>密码:</td>
-						<td ><input name="userPwd" type="password"/></td>
+						<td colspan="2"><input name="userPwd" type="password"/></td>
+						
+					</tr>
+					<tr>
+						<td>验证码:</td>
+						<td>
+							<input name="code" type="text"/>
+							
+						</td>
+						<td>
+							<img alt="图挂了" src="random">
+						</td>
 						
 					</tr>
 					
 					<tr>
-						<td colspan="2" align="center">
+						<td colspan="3" align="center">
 							<button type="submit" >登录</button>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;
 							<button type="reset" >重置</button>
-							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;
 							<a href="reg.html" >去注册</a>
+							&nbsp;&nbsp;&nbsp;
+							<a href="showAllUser" >用户列表</a>
 						</td>
 						
 					</tr>
